@@ -10,14 +10,14 @@ const CodeEditor = ({ code, setCode, language = "javascript" }) => {
     <div className="editor-container" style={{ height: "100%", width: "100%" }}>
       <Editor
         height="100%"
-        defaultLanguage={language}
+        language={language}
         defaultValue="// Start coding here"
         value={code}
         onChange={handleEditorChange}
         theme="vs-dark"
         options={{
-            minimap: { enabled: false },
-            fontSize: 14,
+          minimap: { enabled: false },
+          fontSize: 14,
         }}
       />
     </div>

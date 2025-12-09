@@ -68,15 +68,27 @@ const InterviewRoom = () => {
         }, 5000);
     };
 
+    const [language, setLanguage] = useState("javascript");
+
+    const handleLanguageChange = (e) => {
+        setLanguage(e.target.value);
+    };
+
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
             <div style={{ flex: 1, borderRight: '1px solid #ccc' }}>
                 <div style={{ padding: '10px', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span>Room: {sessionId}</span>
-                    <button onClick={runCode}>Run Code</button>
+                    <div>
+                        <select value={language} onChange={handleLanguageChange} style={{ marginRight: '10px' }}>
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                        </select>
+                        <button onClick={runCode} disabled={language !== 'javascript'}>Run Code</button>
+                    </div>
                 </div>
                 <div style={{ height: 'calc(100% - 50px)' }}>
-                    <CodeEditor code={code} setCode={handleCodeChange} />
+                    <CodeEditor code={code} setCode={handleCodeChange} language={language} />
                 </div>
             </div>
             <div style={{ width: '300px', padding: '10px', backgroundColor: '#f0f0f0', overflowY: 'auto' }}>
