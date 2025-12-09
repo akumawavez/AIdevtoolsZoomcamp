@@ -13,8 +13,13 @@ const io = new Server(server, {
     }
 });
 
+const path = require('path');
+
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // In-memory storage for sessions (replace with DB in production)
 const sessions = {};
@@ -36,6 +41,11 @@ app.get('/api/sessions/:sessionId', (req, res) => {
     } else {
         res.status(404).json({ error: "Session not found" });
     }
+});
+
+// Handle SPA routing
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
 // Socket.io Logic
