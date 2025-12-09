@@ -3,6 +3,7 @@ services:
     name: interview-platform
     env: docker
     plan: free
+    rootDir: cohorts/2025/02-end-to-end/interview-platform
     dockerContext: .
     dockerfilePath: Dockerfile
     numInstances: 1
