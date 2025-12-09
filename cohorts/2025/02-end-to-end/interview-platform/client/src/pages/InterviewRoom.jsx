@@ -7,12 +7,22 @@ const InterviewRoom = () => {
     const { sessionId } = useParams();
     const [code, setCode] = useState("// Start coding here");
     const [output, setOutput] = useState([]);
+    const [isConnected, setIsConnected] = useState(false);
     const socketRef = useRef(null);
 
     // Socket Setup
     useEffect(() => {
         socketRef.current = io('http://localhost:3000');
-        socketRef.current.emit('join-room', sessionId);
+
+        socketRef.current.on('connect', () => {
+            setIsConnected(true);
+            socketRef.current.emit('join-room', sessionId);
+        });
+
+        socketRef.current.on('disconnect', () => {
+            setIsConnected(false);
+        });
+
         socketRef.current.on('code-update', (newCode) => {
             setCode(newCode);
         });
@@ -122,21 +132,38 @@ const InterviewRoom = () => {
         setOutput([]);
     }
 
+    const copyInvite = () => {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Invite link copied to clipboard!");
+    }
+
     return (
         <div className="interview-container">
             {/* Header */}
             <header className="room-header">
                 <div className="left-section">
-                    <Link to="/" style={{ textDecoration: 'none' }}>
+                    <Link to="/" style={{ textDecoration: 'none' }} className="brand-link">
                         <div className="logo-small">🚀</div>
+                        <span className="brand-name">InterviewPlatform</span>
                     </Link>
+                    <div className="separator"></div>
                     <div className="room-info">
-                        <span className="label">Session ID:</span>
-                        <span className="value">{sessionId}</span>
+                        <span className="label">Session:</span>
+                        <span className="value">{sessionId.slice(0, 8)}...</span>
+                        <button className="icon-btn" onClick={copyInvite} title="Copy Link">🔗</button>
                     </div>
                 </div>
 
+                <div className="center-section">
+                    <span className="room-title">Technical Interview</span>
+                </div>
+
                 <div className="right-section flex-row items-center gap-4">
+                    <div className={`status-indicator ${isConnected ? 'connected' : 'disconnected'}`}>
+                        <span className="dot"></span>
+                        {isConnected ? 'Connected' : 'Disconnected'}
+                    </div>
+
                     <select
                         value={language}
                         onChange={handleLanguageChange}
@@ -158,13 +185,22 @@ const InterviewRoom = () => {
 
             {/* Main Content */}
             <div className="workspace">
+                <div className="left-pane">
+                    <div className="pane-header">Problem Statement</div>
+                    <textarea
+                        className="notes-area"
+                        placeholder="Paste interview question or notes here..."
+                        defaultValue="# Two Sum\n\nGiven an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice."
+                    />
+                </div>
+
                 <div className="editor-pane">
                     <CodeEditor code={code} setCode={handleCodeChange} language={language} />
                 </div>
 
                 <div className="output-pane">
                     <div className="pane-header">
-                        <span>Output</span>
+                        <span>Console Output</span>
                         <button className="clear-btn" onClick={clearOutput}>Clear</button>
                     </div>
                     <div className="terminal-window">
@@ -193,57 +229,122 @@ const InterviewRoom = () => {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 0 1.5rem;
+                    padding: 0 1rem;
                 }
 
-                .logo-small {
-                    font-size: 1.5rem;
+                .brand-link {
+                    display: flex;
+                    align-items: center;
+                    color: var(--text-primary);
+                    font-weight: 600;
                     margin-right: 1rem;
                 }
+                
+                .separator {
+                    width: 1px;
+                    height: 24px;
+                    background-color: var(--border-color);
+                    margin-right: 1rem;
+                }
+
+                .logo-small { font-size: 1.2rem; margin-right: 0.5rem; }
 
                 .room-info {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    font-size: 0.9rem;
+                    font-size: 0.85rem;
                     color: var(--text-secondary);
-                    background-color: var(--bg-tertiary);
-                    padding: 0.25rem 0.75rem;
-                    border-radius: 4px;
                 }
 
                 .room-info .value {
                     color: var(--text-primary);
                     font-family: monospace;
                 }
+                
+                .icon-btn {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    padding: 2px;
+                    opacity: 0.7;
+                    transition: opacity 0.2s;
+                }
+                .icon-btn:hover { opacity: 1; }
+
+                .room-title {
+                    font-weight: 600;
+                    color: var(--text-primary);
+                    letter-spacing: 0.5px;
+                }
+
+                .status-indicator {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
+                }
+                
+                .status-indicator .dot {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                }
+                
+                .status-indicator.connected .dot { background-color: var(--success-color); box-shadow: 0 0 5px var(--success-color); }
+                .status-indicator.disconnected .dot { background-color: var(--error-color); }
 
                 .workspace {
                     flex: 1;
                     display: flex;
                     overflow: hidden;
                 }
+                
+                .left-pane {
+                    flex: 1; /* 20% */
+                    border-right: 1px solid var(--border-color);
+                    display: flex;
+                    flex-direction: column;
+                    background-color: var(--bg-secondary);
+                    min-width: 250px;
+                }
+                
+                .notes-area {
+                    flex: 1;
+                    background-color: var(--bg-secondary);
+                    color: var(--text-primary);
+                    border: none;
+                    padding: 1rem;
+                    resize: none;
+                    outline: none;
+                    font-family: var(--font-family);
+                    line-height: 1.6;
+                }
 
                 .editor-pane {
-                    flex: 2; /* 66% width */
+                    flex: 2; /* 50% */
                     border-right: 1px solid var(--border-color);
                 }
 
                 .output-pane {
-                    flex: 1; /* 33% width */
+                    flex: 1.2; /* 30% */
                     display: flex;
                     flex-direction: column;
-                    background-color: #1e1e1e; /* Terminal background */
+                    background-color: #1e1e1e;
+                    min-width: 250px;
                 }
 
                 .pane-header {
-                    height: 40px;
-                    background-color: var(--bg-secondary);
+                    height: 36px;
+                    background-color: var(--bg-tertiary);
                     border-bottom: 1px solid var(--border-color);
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     padding: 0 1rem;
-                    font-size: 0.85rem;
+                    font-size: 0.8rem;
                     font-weight: 600;
                     color: var(--text-secondary);
                     text-transform: uppercase;
@@ -255,8 +356,9 @@ const InterviewRoom = () => {
                     border: none;
                     color: var(--text-secondary);
                     cursor: pointer;
-                    font-size: 0.8rem;
+                    font-size: 0.75rem;
                 }
+                
                 .clear-btn:hover { color: var(--text-primary); }
 
                 .terminal-window {
