@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: interview-platform
+    env: docker
+    plan: free
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    numInstances: 1
+    envVars:
+      - key: PORT
+        value: 10000
