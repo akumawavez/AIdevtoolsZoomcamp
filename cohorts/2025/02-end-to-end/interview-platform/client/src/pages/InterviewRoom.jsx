@@ -50,7 +50,13 @@ const InterviewRoom = () => {
     }, []);
 
     const handleLanguageChange = (e) => {
-        setLanguage(e.target.value);
+        const newLanguage = e.target.value;
+        setLanguage(newLanguage);
+        if (newLanguage === 'python') {
+            setCode("# Start coding here\nprint('Hello World!')");
+        } else {
+            setCode("// Start coding here\nconsole.log('Hello World!');");
+        }
     };
 
     const runCode = async () => {
@@ -131,7 +137,7 @@ const InterviewRoom = () => {
             <div style={{ width: '300px', padding: '10px', backgroundColor: '#f0f0f0', overflowY: 'auto' }}>
                 <h3>Output</h3>
                 {output.map((line, index) => (
-                    <div key={index} style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
+                    <div key={index} style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap', color: 'black' }}>
                         {typeof line === 'object' ? JSON.stringify(line) : line}
                     </div>
                 ))}
