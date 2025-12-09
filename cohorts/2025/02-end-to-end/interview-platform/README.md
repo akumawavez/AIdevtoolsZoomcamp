@@ -14,29 +14,22 @@ A real-time collaborative coding platform with safe browser-based code execution
 
 ## Getting Started
 
-### 1. Backend Setup
+### Quick Start
 
-Navigate to the server directory, install dependencies, and start the server.
+1.  **Install Dependencies**:
+    Run the following command from the root directory to install dependencies for the root, client, and server:
+    ```bash
+    npm run install:all
+    ```
 
-```bash
-cd server
-npm install
-node index.js
-```
+2.  **Run the Application**:
+    Start both the client and server concurrently:
+    ```bash
+    npm run dev
+    ```
 
-The server will start on `http://localhost:3000`.
-
-### 2. Frontend Setup
-
-Open a new terminal, navigate to the client directory, install dependencies, and start the development server.
-
-```bash
-cd client
-npm install
-npm run dev
-```
-
-The application will be available at `http://localhost:5173`.
+    - Frontend: `http://localhost:5173`
+    - Backend: `http://localhost:3000`
 
 ## Usage
 
