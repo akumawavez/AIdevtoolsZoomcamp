@@ -241,22 +241,164 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 550px;
+  width: 100%;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--text);
+}
+
+.question-header {
+  margin-bottom: 1.5rem;
+}
+
+.question-number {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--background);
+  border-radius: 3px;
+  margin-top: 0.75rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.question-text {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option {
+  background: var(--background);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.option.selected {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.2);
+}
+
+.results {
+  text-align: center;
+}
+
+.results-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.results h3 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.score {
+  font-size: 1.5rem;
+  color: var(--secondary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.feedback {
+  color: var(--text-muted);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .nav {
     padding: 1rem 2rem;
   }
-  
+
   .hero h1 {
     font-size: 2.5rem;
   }
-  
+
   .hero-actions {
     flex-direction: column;
   }
-  
+
   .features-section,
   .demo-section {
     padding: 4rem 2rem;
+  }
+
+  .modal {
+    padding: 2rem 1.5rem;
   }
 }
