@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic
+mcp
+python-multipart
+sqlalchemy
+psycopg2-binary
+alembic
+requests
