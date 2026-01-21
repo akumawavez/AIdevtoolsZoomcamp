@@ -1,21 +1,12 @@
 """
-MCP Server for AI Aptitude Test Evaluation.
+MCP Client service for calling the evaluation tools.
 
-This server provides tools for:
-1. Generating personalized feedback based on quiz performance
-2. Analyzing answer patterns to identify learning gaps
-3. Providing study recommendations
-
-Run with: python -m backend.mcp_server (or as part of Docker)
+This module provides functions to call MCP tools directly
+without running a separate server process (in-process usage).
 """
-from mcp.server.fastmcp import FastMCP
 from typing import List, Dict, Any
 
-# Initialize FastMCP server
-mcp = FastMCP("AptitudeTestEvaluator")
 
-
-@mcp.tool()
 def analyze_quiz_performance(
     category_scores: List[Dict[str, Any]],
     total_score: float,
@@ -24,13 +15,7 @@ def analyze_quiz_performance(
     """
     Analyzes quiz performance and generates personalized feedback.
     
-    Args:
-        category_scores: List of {category, correct, total, percentage} dicts
-        total_score: Overall percentage score
-        difficulty_breakdown: Dict with {easy, medium, hard} correct counts
-    
-    Returns:
-        Detailed analysis with recommendations
+    This is a direct implementation matching the MCP tool interface.
     """
     analysis = {
         "performance_level": "",
@@ -108,20 +93,12 @@ def analyze_quiz_performance(
     return analysis
 
 
-@mcp.tool()
 def generate_study_plan(
     weak_categories: List[str],
     skill_level: str
 ) -> Dict[str, Any]:
     """
     Generates a personalized study plan based on identified weaknesses.
-    
-    Args:
-        weak_categories: Categories needing improvement
-        skill_level: Current estimated skill level
-    
-    Returns:
-        Structured study plan with resources
     """
     resources = {
         "Python Programming": [
@@ -195,55 +172,3 @@ def generate_study_plan(
     ]
     
     return plan
-
-
-@mcp.tool()
-def get_question_explanation(
-    question_id: int,
-    question_text: str,
-    correct_answer: str,
-    user_answer: str
-) -> Dict[str, str]:
-    """
-    Generates an explanation for why an answer is correct/incorrect.
-    
-    Args:
-        question_id: The question ID
-        question_text: The question text
-        correct_answer: The correct answer option
-        user_answer: What the user selected
-    
-    Returns:
-        Explanation dict
-    """
-    is_correct = correct_answer.lower() == user_answer.lower()
-    
-    return {
-        "question_id": str(question_id),
-        "is_correct": str(is_correct),
-        "explanation": (
-            f"The correct answer is '{correct_answer.upper()}'. "
-            f"{'Well done!' if is_correct else 'Review this concept and try similar problems.'}"
-        ),
-        "hint": "Focus on understanding the underlying concept, not just memorizing answers."
-    }
-
-
-# Resource to expose server capabilities
-@mcp.resource("capabilities://evaluator")
-def get_capabilities() -> str:
-    """Returns the capabilities of this MCP server."""
-    return """
-    AI Aptitude Test Evaluator MCP Server
-    
-    Available Tools:
-    1. analyze_quiz_performance - Analyze quiz results and generate feedback
-    2. generate_study_plan - Create personalized study recommendations
-    3. get_question_explanation - Explain correct/incorrect answers
-    
-    Use these tools to provide intelligent, personalized feedback to candidates.
-    """
-
-
-if __name__ == "__main__":
-    mcp.run()

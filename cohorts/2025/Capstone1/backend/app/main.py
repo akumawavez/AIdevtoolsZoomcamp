@@ -1,10 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="AI Aptitude Test Platform API")
+from .database import init_db
+from .routes import router as questions_router
 
-# CORS configuration
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(title="AI Aptitude Test Platform API", lifespan=lifespan)
+
 origins = [
     "http://localhost:3000",
     "http://localhost:5173",
@@ -18,13 +27,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class HealthCheck(BaseModel):
-    status: str
-    message: str
+app.include_router(questions_router)
 
-@app.get("/", response_model=HealthCheck)
+
+@app.get("/")
 async def root():
-    return {"status": "ok", "message": "Backend is running"}
+    return {"status": "ok", "message": "AI Aptitude Test API"}
+
 
 @app.get("/health")
 async def health():
